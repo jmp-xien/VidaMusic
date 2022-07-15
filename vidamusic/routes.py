@@ -76,10 +76,6 @@ def process():
     return render_template("process.html", audio_li=ac)
 
 
-    musicli = audli
-    return render_template("process.html", pageid=pageid, pageli=pageli, audio_li=musicli)
-
-
 @app.route("/home")
 def home():
     pageid="intro"
