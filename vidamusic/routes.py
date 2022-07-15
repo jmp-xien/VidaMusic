@@ -4,13 +4,12 @@
 # Date:     01/01/2020
 # Version:  0.01
 
-import time
+import time, re
 from flask import request, flash, url_for, \
     redirect, render_template
 from vidamusic import app
 from vidamusic.forms import VideoList
 from vidamusic.process import proc_download_vid, proc_convert_mp3
-
 
 page = {
     "intro": "Main Page",
@@ -27,15 +26,18 @@ class Proc_Links:
 
     def download_vid(self):
         print("Dowloading listed videos...")
-        linkli = self.links.split(' ')
-        for li in linkli:
-            vd = proc_download_vid(li, self.viddir)
+        print(f'Links: "{self.links}"')
+        cleanli = self.links.strip()
+        linklst = re.split(r'[\n\r\t\f\v ]+', cleanli)
+        print('CleanLinks:', linklst)
+        for li in linklst:
+            proc_download_vid(li, self.viddir)
         return True
 
     def convert_aud(self):
         print("Converting videos to mp3 music...")
-        vc = proc_convert_mp3(self.auddir, self.viddir)
-        return True
+        audlist = proc_convert_mp3(self.auddir, self.viddir)
+        return audlist
 
 
 # Begin Video processing pages
@@ -45,26 +47,37 @@ def index():
     form = VideoList(request.form)
     pageid="intro"
     pageli=page[pageid]
+
     if request.method == 'POST':
         links  = form.videolink.data
         viddir = form.dirvid.data
         auddir = form.diraud.data
         pv = Proc_Links(links, viddir, auddir)
         vd = pv.download_vid()
-        vc = pv.convert_aud()
-        if vc:
+        ac = pv.convert_aud()
+        ## ac = ['First File Name1.mp3','File Name Long Other2.mp3']
+        if ac:
             flash(f'INFO: Converted video files to mp3 music', 'success')
         else:
             flash(f'ERROR: Video file conversion to mp3 failed', 'error')
-        return redirect(url_for('convert'))
+        return render_template("process.html", audio_li=ac)
     return render_template("index.html", form=form, pageid=pageid, pageli=pageli)
 
 
-@app.route("/convert")
-def convert():
-    pageid="intro"
+@app.route("/process")
+def process():
+    pageid="vidconv"
     pageli=page[pageid]
-    return render_template("convert.html", pageid=pageid, pageli=pageli)
+    ac = False
+    if ac:
+        flash(f'INFO: Converted video files to mp3 music', 'success')
+    else:
+        flash(f'ERROR: Video file conversion to mp3 failed', 'error')
+    return render_template("process.html", audio_li=ac)
+
+
+    musicli = audli
+    return render_template("process.html", pageid=pageid, pageli=pageli, audio_li=musicli)
 
 
 @app.route("/home")

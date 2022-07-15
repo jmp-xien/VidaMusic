@@ -41,7 +41,9 @@ blockquote, q {
 
 table {
   border-collapse: collapse;
-  border-spacing: 0; }
+  border-spacing: 0;
+  font-size: 22px;
+  font-family: "Times New Roman", Times, serif; }
 
 body {
   -webkit-text-size-adjust: none; }
@@ -738,6 +740,16 @@ input[type="radio"] + label:before {
   padding: 2px;
   height: 60px;
 } 
+
+div.filelist {
+  font-size: 100%;
+}
+
+td {
+  padding-top: 0px;
+  padding-bottom:10px;
+  padding-right:10px;   
+}
 
 /* Button */
 input[type="submit"],
