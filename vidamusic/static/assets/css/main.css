@@ -723,6 +723,7 @@ input[type="radio"] + label:before {
 .contcenter {
   background-color: rgb(2, 18, 28);
   color: white;
+  border-radius: 10px;
   border: 2px solid black;
   margin: 20px;
   padding: 20px;
@@ -730,6 +731,13 @@ input[type="radio"] + label:before {
   height: 600px;
 } 
 
+.centeredfield {
+  margin: 0;
+  position: relative;
+  left: 25%;
+  padding: 2px;
+  height: 60px;
+} 
 
 /* Button */
 input[type="submit"],

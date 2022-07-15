@@ -4,7 +4,7 @@
 # Date:     01/01/2020
 # Version:  0.01
 
-import webbrowser, time
+import time
 from flask import request, flash, url_for, \
     redirect, render_template
 from vidamusic import app
@@ -26,7 +26,7 @@ class Proc_Links:
         self.auddir = auddir
 
     def download_vid(self):
-        print("Dowloading videos...")
+        print("Dowloading listed videos...")
         linkli = self.links.split(' ')
         for li in linkli:
             vd = proc_download_vid(li, self.viddir)
@@ -73,5 +73,3 @@ def home():
     pageli=page[pageid]
     return render_template("home.html", pageid=pageid, pageli=pageli)
 
-
-webbrowser.open('http://127.0.0.1:54322', new=2)

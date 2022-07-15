@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h2>Convert Videos To MP3 Audio Files</h2>
+<h3>Convert Videos To MP3 Audio Files</h3>
 
 <form method="post" action="">
     <div class="contcenter">
@@ -16,13 +16,10 @@
             Enter Path To Save Audio Files: <br />
             {{ form.diraud(type="text") }}<br />          
         </div>
-        <div id="btn">
+        <div class="centeredfield" id="btn">
             {{ form.submit(id="Button1", onclick="change();") }}
         </div>
-        <br />
-        Click To Convert!<br />
-        Please be patient as it will take about 20 seconds per video.<br />
-        <br />
+            Please be patient as it will take about 20 seconds per video.<br />
         <script type="text/javascript">
             function change(){
                 document.getElementById("Button1").value="Coverting, Please Wait...";

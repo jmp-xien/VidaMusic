@@ -16,4 +16,3 @@ app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=60)
 app.config['MAX_CONTENT_LENGTH'] = 4*1024*1024
 
 from vidamusic import routes
-
