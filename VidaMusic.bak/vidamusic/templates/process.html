@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h2>Converted Video Files To MP3 Audio Files</h2>
+<table>
+    <thead>
+        <tr>
+            <th><h3>Audio File Name List</h3></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for fn in audio_li %}
+        <tr>
+            <td> &#9830; &nbsp; {{ fn }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<br />
+<h3>Return to main page: &nbsp; <a href="/"> Home Page </a></h3>
+{% endblock %}
