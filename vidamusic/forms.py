@@ -1,3 +1,11 @@
+# Extracts and converts audio from FLV, MP4, WMV, and WEBM video files into MP3 music files
+# Python Web Application Program:
+# Author:   J. Manuel Perez
+# License:  Mozilla Public License Version 2.0
+# Date:     01/01/2020
+# Version:  0.01
+# Requires: 
+#  flask, pytube, flask_wtf, wtforms
 from flask_wtf import FlaskForm
 from wtforms import SubmitField, StringField, \
      FileField, TextAreaField, HiddenField, validators
