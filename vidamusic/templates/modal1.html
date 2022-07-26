@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<style>
+body {font-family: Arial, Helvetica, sans-serif;}
+
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+  position: relative;
+  background-color: #4ae4cf;
+  margin: auto;
+  padding: 0;
+  border: 1px solid rgb(19, 38, 62);
+  width: 80%;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+  -webkit-animation-name: animatetop;
+  -webkit-animation-duration: 0.4s;
+  animation-name: animatetop;
+  animation-duration: 0.4s
+}
+
+/* Add Animation */
+@-webkit-keyframes animatetop {
+  from {top:-300px; opacity:0} 
+  to {top:0; opacity:1}
+}
+
+@keyframes animatetop {
+  from {top:-300px; opacity:0}
+  to {top:0; opacity:1}
+}
+
+/* The Close Button */
+.close {
+  color: white;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: rgb(21, 205, 138);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.modal-header {
+  padding: 2px 16px;
+  background-color: #0b5a5c;
+  color: white;
+}
+
+.modal-body {padding: 2px 16px;}
+
+.modal-footer {
+  padding: 2px 16px;
+  background-color: #0b515c;
+  color: white;
+}
+
+
+.progressbarWrapper {
+  height: 30px;
+  width: 500px;
+  max-width: 80%;
+  display: block;
+  margin: auto;
+  margin-top: 10vh;
+  margin-bottom: 10vh;
+  position: relative;
+  background: #555;
+  padding: 3px;
+  box-shadow: inset 0 -1px 1px rgba(255, 255, 255, 0.3);
+  }
+  
+  #greenBar {
+  display: block;
+  height: 100%;
+  width: 0px;
+  background-color: rgb(43, 194, 83);
+  background-image: linear-gradient(
+  center bottom,
+  rgb(43, 194, 83) 37%,
+  rgb(84, 240, 84) 69%
+  );
+  position: relative;
+  overflow: hidden;
+  font-size: 16px;
+  text-align: center;
+  color: white;
+  transition: all 700ms ease;
+  }
+  
+  button {
+  display: block;
+  margin: auto;
+  margin-top: 2px;
+  margin-bottom: 4px;
+  border: none;
+  border-radius: 2px;
+  border: 1px solid #ccc;
+  box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2);
+  padding: 10px 10px;
+  cursor: pointer;
+  }
+  
+  button:active {
+  width: 80px;
+  height: 50px;
+  }
+
+</style>
+</head>
+<body>
+
+<h2>Animated Modal with Header and Footer</h2>
+
+<!-- Trigger/Open The Modal -->
+<button id="myBtn">Open Modal</button>
+<!-- The Modal -->
+<div id="myModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <div class="modal-header">
+      <span class="close">&times;</span>
+      <h2>Modal Header</h2>
+    </div>
+    <div class="modal-body">   
+      <div class="progressbarWrapper">
+        <span id="greenBar"></span>
+      </div>           
+    </div>
+    <div class="modal-footer">
+      <h3>Modal Footer</h3>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// Get the modal
+var modal = document.getElementById("myModal");
+
+// Get the button that opens the modal
+var btn = document.getElementById("myBtn");
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+// When the user clicks the button, open the modal 
+btn.onclick = function() {
+  modal.style.display = "block";
+  let elem = document.getElementById("greenBar");
+  let stepValue = 0;
+  let id = setInterval(frame, 700);
+
+  function frame() {
+
+    if (stepValue >= 100) {
+      clearInterval(id);
+      
+    } else {
+      elem.style.width = (stepValue + 1) + "%";
+      elem.innerHTML = (stepValue + 1) + "%";
+      stepValue=(stepValue + 1);
+    }
+  }
+}
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+  modal.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
+</script>
+<script>
+  
+function move() {
+          
+  let elem = document.getElementById("greenBar");
+  let stepValue = 0;
+  let id = setInterval(frame, 700);
+
+  function frame() {
+
+    if (stepValue >= 100) {
+      clearInterval(id);
+      
+    } else {
+      elem.style.width = (stepValue + 1) + "%";
+      elem.innerHTML = (stepValue + 1) + "%";
+      stepValue=(stepValue + 1);
+    }
+  }
+}
+</script>
+</body>
+</html>

@@ -14,7 +14,7 @@
             Enter Path To Save Video Files: <br>
             {{ form.dirvid(type="text") }}<br />
             Enter Path To Save Audio Files: <br />
-            {{ form.diraud(type="text") }}<br />          
+            {{ form.diraud(type="text") }}<br />
         </div>
         <div class="centeredfield" id="btn">
             {{ form.submit(id="Button1", onclick="change();") }}
@@ -25,5 +25,6 @@
                 document.getElementById("Button1").value="Coverting, Please Wait...";
             }
         </script>
-
+    </div>
+</form>
 {% endblock %}
