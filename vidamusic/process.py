@@ -7,10 +7,18 @@
 # Requires: 
 #  flask, pytube, flask_wtf, wtforms
 
-import os, time, subprocess
+import os, time, subprocess, re
 from pytube import YouTube
 
 del_chars = [';', ':', ",", "'"]
+
+def proc_check_dir(dirname):
+    valchr = re.compile(r"[-_A-Za-z0-9]")
+    if not valchr.search(dirname):
+        return False
+    else:
+        return True
+
 
 def proc_download_vid(link, vidpath):
     yt = YouTube(link)

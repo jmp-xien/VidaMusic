@@ -12,10 +12,11 @@ from flask import request, flash, url_for, \
     redirect, render_template
 from vidamusic import app
 from vidamusic.forms import VideoList
-from vidamusic.process import proc_download_vid, proc_convert_mp3
+from vidamusic.process import proc_download_vid, proc_convert_mp3, proc_check_dir
 
 page = {
     "intro": "Main Page",
+    "login": "Log-In",
     "progress": "Converting",
     "vidconv": "Convert Video",
     "audconv": "Convert Audio",
@@ -45,7 +46,6 @@ class Proc_Links:
 
 
 # Begin Video processing pages
-
 @app.route("/", methods=['GET', 'POST'])
 def index():
     form = VideoList(request.form)
@@ -56,10 +56,19 @@ def index():
         links  = form.videolink.data
         viddir = form.dirvid.data
         auddir = form.diraud.data
+
+        cvidd = proc_check_dir(viddir)
+        caudd = proc_check_dir(auddir)   
+        if not (viddir.strip() or cvidd):
+            flash(f'ERROR: An invalid Video directory was Provided', 'error')
+            return render_template("index.html", form=form, pageid=pageid, pageli=pageli)
+        if not (auddir.strip() or caudd):
+            flash(f'ERROR: An invalid Audio directory was Provided', 'error')
+            return render_template("index.html", form=form, pageid=pageid, pageli=pageli)
+
         pv = Proc_Links(links, viddir, auddir)
         vd = pv.download_vid()
         ac = pv.convert_aud()
-        ## ac = ['First File Name1.mp3','File Name Long Other2.mp3']
         if ac:
             flash(f'INFO: Converted video files to mp3 music', 'success')
         else:
@@ -78,11 +87,21 @@ def progress():
         links  = form.videolink.data
         viddir = form.dirvid.data
         auddir = form.diraud.data
+
+        cvidd = proc_check_dir(viddir)
+        caudd = proc_check_dir(auddir)   
+        if not (viddir.strip() or cvidd):
+            flash(f'ERROR: An invalid Video directory was Provided', 'error')
+            return render_template("progress.html", form=form, pageid=pageid, pageli=pageli)
+        if not (auddir.strip() or caudd):
+            flash(f'ERROR: An invalid Audio directory was Provided', 'error')
+            return render_template("progress.html", form=form, pageid=pageid, pageli=pageli)
+
         pv = Proc_Links(links, viddir, auddir)
-        vd = pv.download_vid()
-        ac = pv.convert_aud()
-        # ac = ['First File Name1.mp3','File Name Long Other2.mp3']
-        # time.sleep(12)
+        # vd = pv.download_vid()
+        # ac = pv.convert_aud()
+        ac = ['First File Name1.mp3','File Name Long Other2.mp3']
+        time.sleep(15)
         if ac:
             flash(f'INFO: Converted video files to mp3 music', 'success')
         else:
@@ -105,9 +124,10 @@ def process():
 
 @app.route("/login")
 def login():
-    pageid="intro"
+    pageid="login"
     pageli=page[pageid]
-    return render_template("home.html", pageid=pageid, pageli=pageli)
+    return render_template("login.html", pageid=pageid, pageli=pageli)
+
 
 @app.route("/modal1")
 def modal1():

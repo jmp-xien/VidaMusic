@@ -55,6 +55,8 @@
 
 </style>
 
+<h3>Convert Videos To MP3 Audio Files</h3>
+
 <div class="contcenter">
   <form method="post" action="">
     {{ form.videolink.label }}
@@ -90,8 +92,21 @@
 
     <script>
       function move() {
-        document.getElementById("Button1").value="Processing, Please Wait...";
+        var vidlinkVal=document.getElementById('videolink').value;
+        if (!vidlinkVal.match(/\S/)) {
+            alert("Please provide link or links to Videos");
+            return false;
+        }
+        var viddirVal=document.getElementById('dirvid').value;
+        if (!viddirVal.match(/\S/)) {
+            return false;
+        }
+        var auddirVal=document.getElementById('diraud').value;
+        if (!auddirVal.match(/\S/)) {
+            return false;
+        }
 
+        document.getElementById("Button1").value="Please Wait...";
         var url = location.href;
         location.href = "#startModal";
         history.replaceState(null,null,url);
@@ -110,13 +125,10 @@
           }
         }
 
-
-
       }
     </script>
   </div>
 </div>
-
 
 <!--End of Modal -->
 
