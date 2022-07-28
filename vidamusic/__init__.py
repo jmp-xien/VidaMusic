@@ -7,6 +7,7 @@
 # Requires: 
 #  flask, pytube, flask_wtf, wtforms
 
+from flask_sqlalchemy import SQLAlchemy
 from flask import Flask
 from datetime import timedelta
 
@@ -15,5 +16,9 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = "ztIx3p07gk6h9haf"
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=60)
 app.config['MAX_CONTENT_LENGTH'] = 4*1024*1024
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///vidamusic.sql3'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
 
 from vidamusic import routes

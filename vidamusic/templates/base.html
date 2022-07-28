@@ -11,9 +11,18 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
         <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/main.css') }}" />
         <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/modal.css') }}" />
-
+        
     </head>
     <body class="is-preload">
+        <div id="header">
+            <ul class="icons">
+                {% if not pageid=="login" %}
+                <li><a href="#"><span class="fa fa-home"></span></a></li>
+                <li><a href="/logout"><span class="fa fa-door-open"></span></a></li>                
+                <li><a href="#"><span class="fa fa-user"></span> &nbsp; {{ username }} </a></li>
+                {% endif %}
+            </ul>
+        </div>
         <div id="wrapper">
             <div class="div1" id='autoHide'>
                 {% with messages = get_flashed_messages(with_categories=true) %}
@@ -26,11 +35,12 @@
                     {% endif %}
                 {% endwith %}
             </div>
+             
         <!-- Header -->
             <header id="header">
-                <h1>VidaMusic</h1>
+                <h1><a href="/">VidaMusic</a></h1>
                 <p>A simple web based application to convert your <br />
-                    favorite Music Videos to MP3 Audio files. By <a href="https://github.com/jmp-xien/VidaMusic/">jmp-xien</a>.</p>
+                favorite Music Videos to MP3 Audio files. By <a href="https://github.com/jmp-xien/VidaMusic/">jmp-xien</a>.</p>
             </header>
             {% block content %}{% endblock %}
         </div>

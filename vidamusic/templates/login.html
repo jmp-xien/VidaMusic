@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h3>Please Log-In:</h3>
+
+<div class="contform">
+  <form method="post" action="">
+    <div class="field half">      
+      {{ form.username.label }}
+      {{ form.username }}
+    </div>
+    <br />
+    <div class="field half">      
+      {{ form.password.label }}
+      {{ form.password }}
+    </div>
+    <br />
+    <div class="centeredfield">
+      {{ form.submit }}
+  </form>
+  <p></p>
+  <div>    
+    <footer id="footer">
+      <ul class="copyright">
+        <li>Access</li><li><a href="/newacc">Sign-Up</a></li><li><a href="/guest">As Guest</a></li>
+      </ul>
+    </footer>
+  </div>
+
+</div>
+
+{% endblock %}
