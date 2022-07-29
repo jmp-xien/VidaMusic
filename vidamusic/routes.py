@@ -141,10 +141,10 @@ def guest():
         caudd = proc_check_dir(auddir)
         if not (viddir.strip() or cvidd):
             flash(f'ERROR: An invalid Video directory was Provided', 'error')
-            return render_template("progress.html", form=form, pageid=pageid, pageli=pageli, username=username)
+            return render_template("guest.html", form=form, pageid=pageid, pageli=pageli, username=username)
         if not (auddir.strip() or caudd):
             flash(f'ERROR: An invalid Audio directory was Provided', 'error')
-            return render_template("progress.html", form=form, pageid=pageid, pageli=pageli, username=username)
+            return render_template("guest.html", form=form, pageid=pageid, pageli=pageli, username=username)
 
         pv = Link_Proc(links, viddir, auddir)
         vd = pv.download_vid()
@@ -156,7 +156,7 @@ def guest():
         else:
             flash(f'ERROR: Video file conversion to mp3 failed', 'error')
         return render_template("process.html", audio_li=ac)
-    return render_template("progress.html", form=form, pageid=pageid, pageli=pageli, username=username)
+    return render_template("guest.html", form=form, pageid=pageid, pageli=pageli, username=username)
 
 
 @app.route("/process")
@@ -220,6 +220,18 @@ def logout():
     session.pop('username', None)
     flash('INFO: You are now Logged-Out.', 'error')
     return redirect(url_for('login'))
+
+
+@app.route("/useredit")
+def useredit():
+    username = 'guest'
+    pageid = "intro"
+    pageli = page[pageid]
+    users = User.query.all()
+    form = UserUpdate(request.form)
+    return render_template("useredit.html", pageid=pageid,
+        pageli=pageli, form=form,
+        username=username, users=users)
 
 
 @app.route("/modal1")
