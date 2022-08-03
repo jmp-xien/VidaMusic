@@ -20,7 +20,7 @@ def proc_download_vid(link, vidpath):
     print(f"Processing video file: {vt}")
     vidti = vidpath + '/' + vt + '.mp4'
     vidfn = vidpath + '/' + vf
-    print(f"Checking if file exists, full path: {vf}")
+    print(f"Checking if file exists: {vf}")
     vttex = os.path.exists(vidti)
     vfnex = os.path.exists(vidfn)
     if vfnex or vttex:
@@ -36,14 +36,14 @@ def proc_download_vid(link, vidpath):
 
 def proc_convert_mp3(vft, audpath, vidpath):
     vidfp = vidpath + '/' + vft
-    print("Checkinf for file: ", vidfp)
+    print("Checking if file downloaded: ", vidfp)
     vnfx = os.path.exists(vidfp)
     if not vnfx:
         print("Invalid video file name or path")
         return None
     vidbn, _ = vft.rsplit('.', 1)
     mp3fn = vidbn + '.mp3'
-    print('MP3 file name: ', mp3fn)
+    print('Cheking for MP3 file name: ', mp3fn)
     audfp = audpath + '/' + mp3fn
     afex = os.path.exists(audfp)
     if afex:

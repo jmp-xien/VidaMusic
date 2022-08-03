@@ -72,10 +72,9 @@ class Video_Proc:
 
     def download_vid(self):
         print("Dowloading listed videos...")
-        print(f'Links: "{self.links}"')
         cleanli = self.links.strip()
         linklst = re.split(r'[\n\r\t\f\v ]+', cleanli)
-        print('CleanLinks:', linklst)
+        print('Link list:', linklst)
         for li in linklst:
             vt = proc_download_vid(li, self.viddir)
             self.video_title_list.append(vt)
@@ -129,22 +128,6 @@ def index():
     return render_template("index.html", form=form, pageid=pageid, pageli=pageli, username=username)
 
 
-@app.route("/process")
-def process():
-    if "username" in session:
-        username = escape(session["username"])
-    else:
-        return redirect(url_for('login'))
-    pageid = "vidconv"
-    pageli = page[pageid]
-    ac = False
-    if ac:
-        flash(f'INFO: Converted video files to mp3 music', 'success')
-    else:
-        flash(f'ERROR: Video file conversion to mp3 failed', 'error')
-    return render_template("process.html", audio_li=ac, username=username)
-
-
 @app.route("/login", methods=['GET', 'POST'])
 def login():
     pageid = "login"
@@ -162,6 +145,14 @@ def login():
         else:
             flash('ERROR: Invalid username or password', 'error')
     return render_template("login.html", form=form, pageid=pageid, pageli=pageli)
+
+
+@app.route("/guest", methods=['GET', 'POST'])
+def guest():
+    auth = True
+    if auth:
+        session["username"] = 'guest'
+    return redirect(url_for('index'))
 
 
 @app.route("/newacc", methods=['GET', 'POST'])
@@ -187,11 +178,13 @@ def newacc():
 
 @app.route('/download/<auddir>/<path:filename>', methods=['GET', 'POST'])
 def download(auddir, filename):
-
+    if "username" in session:
+        username = escape(session["username"])
+    else:
+        return redirect(url_for('login'))
     root_dir = '/home/manny/Share/VidaMusic'
     basepath = root_dir + '/' + auddir + '/'
     path = basepath + filename
-    # dirpath = os.path.join(current_app.root_path, 'Audio')
     # return send_from_directory(dirpath, filename, as_attachment=True)
     return send_file(path, as_attachment=True)
 
@@ -203,21 +196,14 @@ def logout():
     return redirect(url_for('login'))
 
 
-@app.route("/useredit")
+@app.route("/useredit", methods=['GET', 'POST'])
 def useredit():
     username = 'guest'
     pageid = "intro"
     pageli = page[pageid]
     users = User.query.all()
     form = UserUpdate(request.form)
-    return render_template("useredit.html", pageid=pageid,
-        pageli=pageli, form=form,
+    return render_template("useredit.html", 
+        pageid=pageid, pageli=pageli, form=form,
         username=username, users=users)
-
-
-@app.route("/modal1")
-def modal1():
-    pageid = "intro"
-    pageli = page[pageid]
-    return render_template("modal1.html", pageid=pageid, pageli=pageli)
 
