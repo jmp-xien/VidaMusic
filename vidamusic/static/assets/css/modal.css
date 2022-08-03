@@ -41,6 +41,7 @@
     color: #009879;
 }
 
+  
 /* MODAL */
 
 .modalDialog {
@@ -65,7 +66,7 @@
 }
 
 .modalDialog > div {
-    width: 600px;
+    width: 700px;
     position: relative;
     margin: 10% auto;
     padding: 5px 20px 13px 20px;

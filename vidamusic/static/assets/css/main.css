@@ -752,7 +752,7 @@ input[type="radio"] + label:before {
   border: 2px solid black;
   margin: 20px;
   padding: 20px;
-  width: 500px;
+  width: 700px;
   height: 600px;
 }
 

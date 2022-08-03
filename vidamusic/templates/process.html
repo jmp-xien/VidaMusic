@@ -1,17 +1,17 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h3>Converted Video Files To MP3 Audio Files</h3>
+<h3>Converted Video To Audio Files</h3>
 <table>
     <thead>
         <tr>
-            <th><h3>Audio File Name List</h3></th>
+            <th><h4>Audio File Name List</h4></th>
         </tr>
     </thead>
     <tbody>
-        {% for fn in audio_li %}
-        <tr>
-            <td> &#9830; &nbsp; {{ fn }}</td>
+        {% for fn in audiolist %}
+        <tr>                                 
+            <td> &#9830; &nbsp; <a href="/download/{{ auddir }}/{{ fn }}">{{ fn }}</a></td>
         </tr>
         {% endfor %}
     </tbody>

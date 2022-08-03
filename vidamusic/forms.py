@@ -19,7 +19,8 @@ kw2={kwph: 'Audio Directory'}
 kw3={kwph: 'Email'}
 kw4={kwph: 'Username'}
 kw5={kwph: 'Password'}
-kw6={kwph: 'Is Admin'}
+kw6={kwph: 'Verify Password'}
+kw7={kwph: 'Is Admin'}
 
 dirlist = [('windows', "C:/users/username/Music : enter username"), \
         ('linux', "/home/username/Music : enter username")]
@@ -58,14 +59,14 @@ class UserAdd(BaseUser):
         validators.EqualTo('password_confirm', 
         message='Passwords do not match')], render_kw=kw5)
     password_confirm = PasswordField(u'Password Confirm', validators=[
-        validators.Length(min=6, max=24)], render_kw=kw5)
+        validators.Length(min=6, max=24)], render_kw=kw6)
     submit = SubmitField(label=('Add User'))
 
 
 class UserUpdate(BaseUser):
     uid = HiddenField('uid', validators=[DataRequired()])
     password = PasswordField(u'Password', render_kw=kw5)
-    password_confirm = PasswordField(u'Confirm Password', render_kw=kw5)
+    password_confirm = PasswordField(u'Confirm Password', render_kw=kw6)
     admin = SelectField('Admin User', choices=None,
         validators=[DataRequired()])
     submit = SubmitField(label=('Update User'))

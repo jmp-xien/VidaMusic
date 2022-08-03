@@ -2,7 +2,7 @@
 
 tar -xf VidaMusic.tar
 
-pip3 install --no-input flask flask_wtf wtforms pytube
+pip3 install --no-input flask flask_wtf flaks_sqlalchemy wtforms pytube
 
 cd ./VidaMusic/
 

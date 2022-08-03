@@ -7,10 +7,10 @@
 # Requires:
 #  flask, pytube, flask_wtf, wtforms
 
-import time, re
+import os, time, re
 from passlib.hash import bcrypt
-from flask import request, flash, url_for, escape, \
-    redirect, render_template, session
+from flask import request, flash, url_for, escape, current_app, \
+    redirect, render_template, session, send_from_directory, send_file
 from vidamusic import app, db
 from vidamusic.models import User
 from vidamusic.forms import VideoList, LoginForm, UserAdd, UserUpdate
@@ -62,11 +62,13 @@ class User_Proc:
         return False
 
 
-class Link_Proc:
+class Video_Proc:
     def __init__(self, links, viddir, auddir):
-        self.links   = links
+        self.links  = links
         self.viddir = viddir
         self.auddir = auddir
+        self.video_title_list = []
+        self.audio_title_list = []
 
     def download_vid(self):
         print("Dowloading listed videos...")
@@ -75,13 +77,19 @@ class Link_Proc:
         linklst = re.split(r'[\n\r\t\f\v ]+', cleanli)
         print('CleanLinks:', linklst)
         for li in linklst:
-            proc_download_vid(li, self.viddir)
+            vt = proc_download_vid(li, self.viddir)
+            self.video_title_list.append(vt)
         return True
 
-    def convert_aud(self):
-        print("Converting videos to mp3 music...")
-        audlist = proc_convert_mp3(self.auddir, self.viddir)
-        return audlist
+    def extract_audio(self):
+        # loop titles
+        print("Converting video to mp3 music file")
+        for vft in self.video_title_list:
+            print("Extracting audio from:", vft)
+            at = proc_convert_mp3(vft, self.auddir, self.viddir)
+            self.audio_title_list.append(at)
+        print("Completed conversion to mp3 audio")
+        return self.audio_title_list
 
 
 # Begin Video processing pages
@@ -105,58 +113,20 @@ def index():
         caudd = proc_check_dir(auddir)
         if not (viddir.strip() or cvidd):
             flash(f'ERROR: An invalid Video directory was Provided', 'error')
-            return render_template("index.html", form=form, pageid=pageid, pageli=pageli, username=username)
+            return redirect(url_for('index'))
         if not (auddir.strip() or caudd):
             flash(f'ERROR: An invalid Audio directory was Provided', 'error')
-            return render_template("index.html", form=form, pageid=pageid, pageli=pageli, username=username)
+            return redirect(url_for('index'))
 
-        pv = Link_Proc(links, viddir, auddir)
-        vd = pv.download_vid()
-        ac = pv.convert_aud()
-        if ac:
+        vp  = Video_Proc(links, viddir, auddir)
+        vd  = vp.download_vid()
+        afl = vp.extract_audio()
+        if afl:
             flash(f'INFO: Converted videos to mp3 music files', 'success')
         else:
             flash(f'ERROR: Video file conversion to mp3 failed', 'error')
-        return render_template("process.html", audio_li=ac)
+        return render_template("process.html", audiolist=afl, username=username, auddir=auddir)
     return render_template("index.html", form=form, pageid=pageid, pageli=pageli, username=username)
-
-
-@app.route("/guest", methods=['GET', 'POST'])
-def guest():
-    if "username" in session:
-        username = escape(session["username"])
-    else:
-        username = 'guest'
-
-    pageid = "intro"
-    pageli = page[pageid]
-    form = VideoList(request.form)
-
-    if request.method == 'POST':
-        links  = form.videolink.data
-        viddir = form.dirvid.data
-        auddir = form.diraud.data
-
-        cvidd = proc_check_dir(viddir)
-        caudd = proc_check_dir(auddir)
-        if not (viddir.strip() or cvidd):
-            flash(f'ERROR: An invalid Video directory was Provided', 'error')
-            return render_template("guest.html", form=form, pageid=pageid, pageli=pageli, username=username)
-        if not (auddir.strip() or caudd):
-            flash(f'ERROR: An invalid Audio directory was Provided', 'error')
-            return render_template("guest.html", form=form, pageid=pageid, pageli=pageli, username=username)
-
-        pv = Link_Proc(links, viddir, auddir)
-        vd = pv.download_vid()
-        ac = pv.convert_aud()
-        # ac = ['First Music Video File.mp3','Second Music Video File.mp3']
-        time.sleep(15)
-        if ac:
-            flash(f'INFO: Converted video to mp3 music files', 'success')
-        else:
-            flash(f'ERROR: Video file conversion to mp3 failed', 'error')
-        return render_template("process.html", audio_li=ac)
-    return render_template("guest.html", form=form, pageid=pageid, pageli=pageli, username=username)
 
 
 @app.route("/process")
@@ -213,6 +183,17 @@ def newacc():
         else:
             flash(f'ERROR: Adding new user failed', 'error')
     return render_template("newacc.html", form=form, pageid=pageid, pageli=pageli, username=username)
+
+
+@app.route('/download/<auddir>/<path:filename>', methods=['GET', 'POST'])
+def download(auddir, filename):
+
+    root_dir = '/home/manny/Share/VidaMusic'
+    basepath = root_dir + '/' + auddir + '/'
+    path = basepath + filename
+    # dirpath = os.path.join(current_app.root_path, 'Audio')
+    # return send_from_directory(dirpath, filename, as_attachment=True)
+    return send_file(path, as_attachment=True)
 
 
 @app.route("/logout")
