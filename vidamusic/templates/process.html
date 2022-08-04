@@ -1,21 +1,20 @@
 {% extends 'base.html' %}
 {% block content %}
-
 <h3>Converted Video To Audio Files</h3>
-<table>
+  <table>
     <thead>
-        <tr>
-            <th><h5>Audio File List</h5></th>
-        </tr>
+      <tr>
+      <th><h5>Audio File List</h5></th>
+      </tr>
     </thead>
     <tbody>
-        {% for fn in audiolist %}
-        <tr>                                 
-            <td> &#9830; &nbsp; <a href="/download/{{ auddir }}/{{ fn }}">{{ fn }}</a></td>
-        </tr>
-        {% endfor %}
+    {% for fn in audiolist %}
+      <tr>
+      <td> &#9830; &nbsp; <a href="/download/{{ auddir }}/{{ fn }}">{{ fn }}</a></td>
+      </tr>
+    {% endfor %}
     </tbody>
-</table>
+  </table>
 <br />
-<h3>Return to main page: &nbsp; <a href="/"> Home Page </a></h3>
+<h3>Return To: &nbsp; <a href="/"> Home Page </a></h3>
 {% endblock %}

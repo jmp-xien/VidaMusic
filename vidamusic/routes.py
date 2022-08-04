@@ -120,6 +120,7 @@ def index():
         vp  = Video_Proc(links, viddir, auddir)
         vd  = vp.download_vid()
         afl = vp.extract_audio()
+
         if afl:
             flash(f'INFO: Converted videos to mp3 music files', 'success')
         else:
@@ -161,7 +162,6 @@ def newacc():
         username = escape(session["username"])
     else:
         username = 'guest'
-
     pageid = "newacc"
     pageli = page[pageid]
     form = UserAdd(request.form)
@@ -203,7 +203,7 @@ def useredit():
     pageli = page[pageid]
     users = User.query.all()
     form = UserUpdate(request.form)
-    return render_template("useredit.html", 
+    return render_template("useredit.html",
         pageid=pageid, pageli=pageli, form=form,
         username=username, users=users)
 

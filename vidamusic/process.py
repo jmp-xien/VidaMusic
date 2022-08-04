@@ -10,7 +10,7 @@
 import os, time, subprocess, re
 from pytube import YouTube
 
-del_chars = ['.', ';' ':', ",", "'"]
+del_chars = [';' ':', ",", "'"]
 
 def proc_download_vid(link, vidpath):
     yt = YouTube(link)

@@ -41,7 +41,7 @@
                 <div>
                   {{ form.password }}
                   {{ form.password_confirm }}
-                  <small>(blank if no change)</small>            
+                  <small>(blank if no change)</small>
                   {{ form.password.label }}
                 </div>
                 <div>
@@ -74,7 +74,6 @@
         <div id="delModal{{ u.id }}" class="modalDialog">
           <div>
             <a href="#close" title="Close" class="close">X</a>
-
             <form method="post" action="#close">
               <h3>Delete User: {{ u.username }}</h3>
               <p>Are you sure?</p>
@@ -85,7 +84,6 @@
                 </li>
               </ul>
             </form>
-
           </div>
         </div>
       {% endfor %}
