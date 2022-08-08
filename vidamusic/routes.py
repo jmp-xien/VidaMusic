@@ -20,10 +20,12 @@ page = {
     "intro": "Main Page",
     "login": "Log-In",
     "newacc": "Add User",
-    "progress": "Converting",
-    "vidconv": "Convert Video",
+    "vidconv": "Video Download",
     "audconv": "Convert Audio",
+    "useredit": "Edit User",
+    "progress": "Converting",
     "download": "Download Video",
+    "useradmin": "Edit User",
 }
 
 class User_Proc:
@@ -40,13 +42,19 @@ class User_Proc:
         email  =  form.email.data.strip()
         admin  =  'No'
         pwhash =  bcrypt.hash(password)
-        newuser = User(
-            username,
-            pwhash,
-            email,
-            admin,
-        )
+        newuser = User(username, pwhash, email, admin)
         db.session.add(newuser)
+        db.session.commit()
+        return True
+
+    def update_user(self, form, updpw):
+        user = User.query.get(form.uid.data)
+        user.username = form.username.data.strip()
+        user.email =  form.email.data.strip()
+        password  = form.password.data.strip()
+        if updpw:
+            pwhash =  bcrypt.hash(password)
+            user.password = pwhash
         db.session.commit()
         return True
 
@@ -60,6 +68,13 @@ class User_Proc:
             else:
                 return False
         return False
+
+    def del_user(self, uid):
+        user = User.query.get(uid)
+        print("Deleting query:", user)
+        db.session.delete(user)
+        db.session.commit()
+        return True
 
 
 class Video_Proc:
@@ -166,8 +181,8 @@ def newacc():
     pageli = page[pageid]
     form = UserAdd(request.form)
     if request.method == 'POST':
-        au = User_Proc()
-        nu = au.add_user(form)
+        up = User_Proc()
+        nu = up.add_user(form)
         if nu:
             flash(f'INFO: Added new user account to VidaMusic site', 'success')
             return redirect(url_for('login'))
@@ -183,8 +198,8 @@ def download(auddir, filename):
     else:
         return redirect(url_for('login'))
     root_dir = '/home/manny/Share/VidaMusic'
-    basepath = root_dir + '/' + auddir + '/'
-    path = basepath + filename
+    basedir = root_dir + '/' + auddir + '/'
+    path = basedir + filename
     # return send_from_directory(dirpath, filename, as_attachment=True)
     return send_file(path, as_attachment=True)
 
@@ -196,14 +211,96 @@ def logout():
     return redirect(url_for('login'))
 
 
-@app.route("/useredit", methods=['GET', 'POST'])
-def useredit():
-    username = 'guest'
-    pageid = "intro"
+# Admin
+@app.route("/useradmin", methods=['GET', 'POST'])
+def useradmin():
+    if "username" in session:
+        username = escape(session["username"])
+    else:
+        return redirect(url_for('login'))
+    user = User.query.filter_by(username=username).first()
+    if not user.admin == "Yes":
+        flash(f'ERROR: Must be admin. NOT allowed to edit', 'error')
+        return redirect(url_for('index'))
+    pageid = "useradmin"
     pageli = page[pageid]
     users = User.query.all()
     form = UserUpdate(request.form)
-    return render_template("useredit.html",
-        pageid=pageid, pageli=pageli, form=form,
-        username=username, users=users)
+    if request.method == 'POST':
+        password = form.password.data.strip()
+        confpw = form.password_confirm.data.strip()
+        updpw  = False
+        if not (password == '' or password == None):
+            if not password == confpw:
+                flash(f'ERROR: Passwords do not match', 'error')
+                return redirect(url_for('useredit'))
+            else:
+                updpw = True
+        up = User_Proc()
+        uu = up.update_user(form, updpw)
+        if uu:
+            flash(f'INFO: Updated user account in VidaMusic site', 'success')
+        else:
+            flash(f'ERROR: Updating user info failed', 'error')
+    return render_template("useredit.html", pageid=pageid, pageli=pageli,
+            form=form, username=username, users=users)
 
+
+# Admin
+@app.route("/delacc/<uid>/<proc_uname>", methods=['GET', 'POST'])
+def delacc(uid, proc_uname):
+    if "username" in session:
+        username = escape(session["username"])
+    else:
+        return redirect(url_for('login'))
+    # No POST
+    # Check logged in user is admin
+    user = User.query.filter_by(username=username).first()
+    if not user.admin == "Yes":
+        flash(f'ERROR: Must be admin. NOT allowed to delete user { proc_uname }', 'error')
+        return redirect(url_for('useredit'))
+    up = User_Proc()
+    du = up.del_user(uid)
+    if du:
+        flash(f'INFO: Account {proc_uname} is now deleted in VidaMusic', 'error')
+    else:
+        flash(f'ERROR: Deleting user {proc_uname} failed', 'error')
+    return redirect(url_for('useredit'))
+
+
+@app.route("/profile", methods=['GET', 'POST'])
+def profile():
+    if "username" in session:
+        username = escape(session["username"])
+    else:
+        return redirect(url_for('login'))
+    usr_dt = []
+    pageid = "useradmin"
+    pageli = page[pageid]
+    proc_user = User.query.filter_by(username=username).first()
+    if not proc_user or username == 'guest':
+        flash(f'ERROR: Unable to edit "guest" profiles', 'error')
+        return redirect(url_for('index'))
+    form = UserUpdate(request.form)
+    usr_dt.append(proc_user)
+    if request.method == 'POST':
+        if not username == proc_uname:
+            flash(f'ERROR: Unable to load profile page due to log-in error', 'error')
+            return redirect(url_for('index'))
+        password = form.password.data.strip()
+        confpw = form.password_confirm.data.strip()
+        updpw  = False
+        if not (password == '' or password == None):
+            if not password == confpw:
+                flash(f'ERROR: Passwords do not match', 'error')
+                return redirect(url_for('profile'))
+            else:
+                updpw = True
+        up = User_Proc()
+        uu = up.update_user(form, updpw)
+        if uu:
+            flash(f'INFO: Updated your user account in VidaMusic', 'success')
+        else:
+            flash(f'ERROR: Updating your info failed', 'error')
+    return render_template("profile.html", pageid=pageid, pageli=pageli,
+            form=form, username=username, usr=usr_dt)

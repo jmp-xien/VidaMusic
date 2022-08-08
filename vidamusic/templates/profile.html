@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
   <!-- userupdate -->
-  <h3>Edit User Account</h3>
+  <h3>Edit Your Account</h3>
     <div class="inner">
       <table class="styled-table">
       <thead>
@@ -10,21 +10,19 @@
               <th>User Name</th>
               <th>Password</th>
               <th>Email</th>
-              <th>Is Admin</th>
               <th>Edit</th>
               <th>Delete</th>
           </tr>
       </thead>
       <tbody>
-      {% for u in users %}
+      {% for u in usr %}
         <tr>
           <td><code>{{ u.id }}</code></td>
           <td>{{ u.username }}</td>
           <td> ******* </td>
           <td>{{ u.email }}</td>
-          <td>{{ u.admin }}</td>
           <td><a href="#editModal{{ u.id }}" class="button submit">Edit</a></td>
-          <td><a href="#delModal{{ u.id }}" class="button submit">Delete</a></td>
+          <td><a href="#delModal{{ u.id }}" class="button submit">(disabled)</a></td>
         </tr>
         <tr></tr>
         <tr></tr>
@@ -51,21 +49,12 @@
                   {{ form.email.label }}
                 </div>
                 <div>
-                  <select name="admin" id="admin">
-                    <option value="{{ u.admin }}" selected>{{ u.admin }}</option>
-                    <option value="">-- Select User Admin --</option>
-                    <option value="Yes">Yes</option>
-                    <option value="No">No</option>
-                  </select>
-                  {{ form.admin.label }}
-                </div>
-                <div>
-                    <ul class="actions">
-                        <li>
-                            {{ form.submit }} &nbsp;
-                            <a href="#close" class="button submit">Cancel</a>
-                        </li>
-                    </ul>
+                  <ul class="actions">
+                    <li>
+                      {{ form.submit }} &nbsp; &nbsp;
+                      <a href="#close" class="button submit">Cancel</a>
+                    </li>
+                  </ul>
                 </div>
               </div>
             </form>
@@ -73,21 +62,6 @@
           </div>
         </div>
 
-        <div id="delModal{{ u.id }}" class="modalDialog">
-          <div>
-            <a href="#close" title="Close" class="close">X</a>
-            <form method="post" action="#close">
-              <h3>Delete User: {{ u.username }}</h3>
-              <p>Are you sure?</p>
-              <ul class="actions">
-                <li>
-                  <a href="delacc/{{ u.id }}/{{ u.username }}" class="button">Delete</a> &nbsp;
-                  <a href="#close" class="button">Cancel</a>
-                </li>
-              </ul>
-            </form>
-          </div>
-        </div>
       {% endfor %}
       </tbody>
       </table>

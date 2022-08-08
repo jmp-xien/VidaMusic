@@ -55,11 +55,11 @@ class BaseUser(FlaskForm):
 
 class UserAdd(BaseUser):
     password = PasswordField(u'Password', validators=[
-        validators.Length(min=6, max=24),
+        validators.Length(min=8, max=24),
         validators.EqualTo('password_confirm', 
         message='Passwords do not match')], render_kw=kw5)
     password_confirm = PasswordField(u'Password Confirm', validators=[
-        validators.Length(min=6, max=24)], render_kw=kw6)
+        validators.Length(min=8, max=24)], render_kw=kw6)
     submit = SubmitField(label=('Add User'))
 
 
