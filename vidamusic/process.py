@@ -7,7 +7,7 @@
 # Requires:
 #  flask, pytube, flask_wtf, wtforms
 
-import os, time, subprocess, re
+import os, subprocess, re
 from pytube import YouTube
 
 del_chars = [';' ':', ",", "'"]

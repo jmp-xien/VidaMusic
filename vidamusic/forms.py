@@ -72,7 +72,7 @@ class UserUpdate(BaseUser):
     submit = SubmitField(label=('Update'))
 
 
-class ResetAcc(BaseUser):
+class PwdReset(BaseUser):
     username = StringField(u'Username', validators=[DataRequired()],
         render_kw=kw4)
     email = StringField(u'Email', validators=[DataRequired()],

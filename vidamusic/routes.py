@@ -7,28 +7,30 @@
 # Requires:
 #  flask, pytube, flask_wtf, wtforms
 
-import os, time, re
+import os, re
+from secure_smtplib import smtplib
+from datetime import datetime
 from passlib.hash import bcrypt
 from flask import request, flash, url_for, escape, current_app, \
     redirect, render_template, session, send_from_directory, send_file
 from vidamusic import app, db
 from vidamusic.models import User
-from vidamusic.forms import VideoList, LoginForm, UserAdd, UserUpdate, ResetAcc
+from vidamusic.forms import VideoList, LoginForm, UserAdd, UserUpdate, PwdReset
 from vidamusic.process import proc_download_vid, proc_convert_mp3, proc_check_dir
 
 page = {
     "intro": "Main Page",
     "login": "Log-In",
+    "reset": "Reset Password",
     "newacc": "Add User",
-    "pwdreset": "Reset Password",
     "audconv": "Convert Audio",
     "vidconv": "Video Download",
-    "profile": "Edit Acconut",
+    "profile": "Edit Account",
     "download": "Download Video",
-    "resetacc": "Reset Password",
     "progress": "Converting",
+    "pwdreset": "Reset Password",
     "useredit": "Edit User",
-    "useradmin": "Edit User",
+    "useradmin": "User Admin",
 }
 
 class User_Proc:
@@ -81,14 +83,30 @@ class User_Proc:
             user = User.query.filter_by(email=email).first()
         else:
             return False
-        # hash of pw
-        # user id
+        eml = user.email
         uid = user.id
         upw = user.password
-        rli = str(uid) + str(upw)
-        #  
+        now = datetime.now()
+        tms = now.strftime("%H%M%S")
+        hst = request.host  
+        rli = hst + '/pwdreset/p/reset?prrurl=' + str(uid) + str(tms) + str(upw)
+        frm = 'vidamusic@vidamusic.com'
         # mailto = mail(email, "Password Reset", rli)
-        #
+        sender = frm
+        receivers = [email]
+        message = f"From: VidaMusic <{frm}> \
+        To: <{email} \
+        Subject: Password Reset \
+        Click on link below to reset your password to VidaMusic.com \
+        Link: {rli} "
+
+        try:
+            smtpObj = smtplib.SMTP('localhost')
+            smtpObj.sendmail(sender, receivers, message)         
+            print("email to reset password sent")
+        except:
+            print("Error: unable to send email")
+
         print(rli)
         return True
 
@@ -329,11 +347,11 @@ def profile():
             form=form, username=username, usr=usr_dt)
 
 
-@app.route("/resetacc", methods=['GET', 'POST'])
-def resetacc():
-    pageid = "resetacc"
+@app.route("/reset", methods=['GET', 'POST'])
+def reset():
+    pageid = "reset"
     pageli = page[pageid]
-    form = ResetAcc(request.form)
+    form = PwdReset(request.form)
     if request.method == 'POST':
         up = User_Proc()
         ra = up.reset_account(form)
@@ -342,27 +360,30 @@ def resetacc():
             return redirect(url_for('login'))
         else:
             flash(f'ERROR: Provided info not found, account reset failed', 'error')
-    return render_template("resetacc.html", form=form, pageid=pageid, pageli=pageli)
-
+    return render_template("reset.html", form=form, pageid=pageid, pageli=pageli)
 
 
 @app.route("/pwdreset/p/reset", methods=['GET', 'POST'])
 def pwdreset():
     url_args = request.args
-    mxurl = url_args['prurl']
-    uid, purl = mxurl.split('$', 1) 
-    in_pwd = '$' + str(purl)
-    usr_dt = []
+    full_url = url_args['prurl']
+    uid_time, pw_url = full_url.split('$', 1) 
+    in_pwd = '$' + str(pw_url)
+    tms = uid_time[-6:]
+    uid = uid_time[:-6]
+    print("UID: ", uid)
+    print("Time: ", tms)
+    print("PWD: ", in_pwd)
     pageid = "pwdreset"
-    pageli = page[pageid]    
-    
+    pageli = page[pageid]        
     u = User.query.get(uid)    
     if not u.password == in_pwd:
         flash(f'ERROR: Unable to reset user or invalid link', 'error')
-        return redirect(url_for('login'))
+        return redirect(url_for('reset'))
     else:
         print("Resetting user password.")
     form = UserUpdate(request.form)
+    usr_dt = []
     usr_dt.append(u)
     if request.method == 'POST':
         password = form.password.data.strip()
