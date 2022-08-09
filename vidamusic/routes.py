@@ -13,18 +13,21 @@ from flask import request, flash, url_for, escape, current_app, \
     redirect, render_template, session, send_from_directory, send_file
 from vidamusic import app, db
 from vidamusic.models import User
-from vidamusic.forms import VideoList, LoginForm, UserAdd, UserUpdate
+from vidamusic.forms import VideoList, LoginForm, UserAdd, UserUpdate, ResetAcc
 from vidamusic.process import proc_download_vid, proc_convert_mp3, proc_check_dir
 
 page = {
     "intro": "Main Page",
     "login": "Log-In",
     "newacc": "Add User",
-    "vidconv": "Video Download",
+    "pwdreset": "Reset Password",
     "audconv": "Convert Audio",
-    "useredit": "Edit User",
-    "progress": "Converting",
+    "vidconv": "Video Download",
+    "profile": "Edit Acconut",
     "download": "Download Video",
+    "resetacc": "Reset Password",
+    "progress": "Converting",
+    "useredit": "Edit User",
     "useradmin": "Edit User",
 }
 
@@ -68,6 +71,26 @@ class User_Proc:
             else:
                 return False
         return False
+
+    def reset_account(self, form):
+        username = form.username.data.strip()
+        email  =  form.email.data.strip()
+        if username:
+            user = User.query.filter_by(username=username).first()
+        elif email:
+            user = User.query.filter_by(email=email).first()
+        else:
+            return False
+        # hash of pw
+        # user id
+        uid = user.id
+        upw = user.password
+        rli = str(uid) + str(upw)
+        #  
+        # mailto = mail(email, "Password Reset", rli)
+        #
+        print(rli)
+        return True
 
     def del_user(self, uid):
         user = User.query.get(uid)
@@ -275,7 +298,7 @@ def profile():
     else:
         return redirect(url_for('login'))
     usr_dt = []
-    pageid = "useradmin"
+    pageid = "profile"
     pageli = page[pageid]
     proc_user = User.query.filter_by(username=username).first()
     if not proc_user or username == 'guest':
@@ -285,7 +308,7 @@ def profile():
     usr_dt.append(proc_user)
     if request.method == 'POST':
         if not username == proc_uname:
-            flash(f'ERROR: Unable to load profile page due to log-in error', 'error')
+            flash(f'ERROR: Unable to load your profile due to error', 'error')
             return redirect(url_for('index'))
         password = form.password.data.strip()
         confpw = form.password_confirm.data.strip()
@@ -304,3 +327,57 @@ def profile():
             flash(f'ERROR: Updating your info failed', 'error')
     return render_template("profile.html", pageid=pageid, pageli=pageli,
             form=form, username=username, usr=usr_dt)
+
+
+@app.route("/resetacc", methods=['GET', 'POST'])
+def resetacc():
+    pageid = "resetacc"
+    pageli = page[pageid]
+    form = ResetAcc(request.form)
+    if request.method == 'POST':
+        up = User_Proc()
+        ra = up.reset_account(form)
+        if ra:
+            flash(f'INFO: Link to reset account was sent to your email', 'success')
+            return redirect(url_for('login'))
+        else:
+            flash(f'ERROR: Provided info not found, account reset failed', 'error')
+    return render_template("resetacc.html", form=form, pageid=pageid, pageli=pageli)
+
+
+
+@app.route("/pwdreset/p/reset", methods=['GET', 'POST'])
+def pwdreset():
+    url_args = request.args
+    mxurl = url_args['prurl']
+    uid, purl = mxurl.split('$', 1) 
+    in_pwd = '$' + str(purl)
+    usr_dt = []
+    pageid = "pwdreset"
+    pageli = page[pageid]    
+    
+    u = User.query.get(uid)    
+    if not u.password == in_pwd:
+        flash(f'ERROR: Unable to reset user or invalid link', 'error')
+        return redirect(url_for('login'))
+    else:
+        print("Resetting user password.")
+    form = UserUpdate(request.form)
+    usr_dt.append(u)
+    if request.method == 'POST':
+        password = form.password.data.strip()
+        confpw = form.password_confirm.data.strip()
+        updpw  = True
+        if not (password == '' or password == None):
+            if not password == confpw:
+                flash(f'ERROR: Passwords do not match', 'error')
+            return render_template("pwdreset.html", pageid=pageid, pageli=pageli,
+                form=form, username='', usr=usr_dt) 
+        up = User_Proc()
+        uu = up.update_user(form, updpw)
+        if uu:
+            flash(f'INFO: Updated your user account in VidaMusic', 'success')
+        else:
+            flash(f'ERROR: Password reset failed, contac site admin.', 'error')
+    return render_template("pwdreset.html", pageid=pageid, pageli=pageli,
+            form=form, username='', usr=usr_dt)    

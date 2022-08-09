@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h4>Please provide info to reset account:</h4>
+
+<div class="contform">
+  <p>Reset Password:</p>
+  <form method="post" action="">
+    <div class="field half">      
+      {{ form.username }}
+      {{ form.username.label }}
+    </div>
+    <div class="field half">      
+      {{ form.email }}
+      {{ form.email.label }}
+    </div>
+    <br />
+    <div class="centeredfield">
+      {{ form.submit }}
+    </div>
+  </form>
+</div>
+
+{% endblock %}

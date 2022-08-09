@@ -50,16 +50,16 @@ class BaseUser(FlaskForm):
     email = StringField(u'Email', validators=[DataRequired()],
         render_kw=kw3)
     admin = RadioField('Admin User', validators=[DataRequired()],
-        choices=[('No', 'No'), ('Yes', 'Yes')], default='No')        
+        choices=[('No', 'No'), ('Yes', 'Yes')], default='No')
 
 
 class UserAdd(BaseUser):
     password = PasswordField(u'Password', validators=[
         validators.Length(min=8, max=24),
-        validators.EqualTo('password_confirm', 
+        validators.EqualTo('password_confirm',
         message='Passwords do not match')], render_kw=kw5)
-    password_confirm = PasswordField(u'Password Confirm', validators=[
-        validators.Length(min=8, max=24)], render_kw=kw6)
+    password_confirm = PasswordField(u'Password Confirm', 
+        validators=[validators.Length(min=8, max=24)], render_kw=kw6)
     submit = SubmitField(label=('Add User'))
 
 
@@ -69,5 +69,12 @@ class UserUpdate(BaseUser):
     password_confirm = PasswordField(u'Confirm Password', render_kw=kw6)
     admin = SelectField('Admin User', choices=None,
         validators=[DataRequired()])
-    submit = SubmitField(label=('Update User'))
-    
+    submit = SubmitField(label=('Update'))
+
+
+class ResetAcc(BaseUser):
+    username = StringField(u'Username', validators=[DataRequired()],
+        render_kw=kw4)
+    email = StringField(u'Email', validators=[DataRequired()],
+        render_kw=kw3)
+    submit = SubmitField(label=('Reset Account'))
