@@ -88,7 +88,7 @@ class User_Proc:
         upw = user.password
         now = datetime.now()
         tms = now.strftime("%H%M%S")
-        hst = request.host  
+        hst = request.host
         rli = hst + '/pwdreset/p/reset?prrurl=' + str(uid) + str(tms) + str(upw)
         frm = 'vidamusic@vidamusic.com'
         # mailto = mail(email, "Password Reset", rli)
@@ -99,14 +99,12 @@ class User_Proc:
         Subject: Password Reset \
         Click on link below to reset your password to VidaMusic.com \
         Link: {rli} "
-
         try:
             smtpObj = smtplib.SMTP('localhost')
-            smtpObj.sendmail(sender, receivers, message)         
+            smtpObj.sendmail(sender, receivers, message)
             print("email to reset password sent")
         except:
             print("Error: unable to send email")
-
         print(rli)
         return True
 
@@ -148,6 +146,7 @@ class Video_Proc:
 
 
 # Begin Video processing pages
+# Main Route
 @app.route("/", methods=['GET', 'POST'])
 def index():
     if "username" in session:
@@ -367,16 +366,13 @@ def reset():
 def pwdreset():
     url_args = request.args
     full_url = url_args['prurl']
-    uid_time, pw_url = full_url.split('$', 1) 
+    uid_time, pw_url = full_url.split('$', 1)
     in_pwd = '$' + str(pw_url)
     tms = uid_time[-6:]
     uid = uid_time[:-6]
-    print("UID: ", uid)
-    print("Time: ", tms)
-    print("PWD: ", in_pwd)
     pageid = "pwdreset"
-    pageli = page[pageid]        
-    u = User.query.get(uid)    
+    pageli = page[pageid]
+    u = User.query.get(uid)
     if not u.password == in_pwd:
         flash(f'ERROR: Unable to reset user or invalid link', 'error')
         return redirect(url_for('reset'))
@@ -393,7 +389,7 @@ def pwdreset():
             if not password == confpw:
                 flash(f'ERROR: Passwords do not match', 'error')
             return render_template("pwdreset.html", pageid=pageid, pageli=pageli,
-                form=form, username='', usr=usr_dt) 
+                form=form, username='', usr=usr_dt)
         up = User_Proc()
         uu = up.update_user(form, updpw)
         if uu:
@@ -401,4 +397,4 @@ def pwdreset():
         else:
             flash(f'ERROR: Password reset failed, contac site admin.', 'error')
     return render_template("pwdreset.html", pageid=pageid, pageli=pageli,
-            form=form, username='', usr=usr_dt)    
+            form=form, username='', usr=usr_dt)

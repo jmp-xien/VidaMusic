@@ -1,11 +1,13 @@
 #!/bin/env bash
 
-tar -xf VidaMusic.tar
+pip3 install --no-input flask flask_wtf flaks_sqlalchemy sqlalchemy wtforms secure_smtplib pytube
 
-pip3 install --no-input flask flask_wtf flaks_sqlalchemy wtforms pytube
+tar -xf VidaMusic.tar
 
 cd ./VidaMusic/
 
-python3 run.py
+echo "VidaMusic installed and running as below with these options:"
+echo ''
 
+python3 run.py
 
