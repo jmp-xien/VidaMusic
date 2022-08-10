@@ -7,7 +7,7 @@
 # Requires:
 #  flask, pytube, flask_wtf, wtforms
 
-import os, re
+import os, re, ssl
 from secure_smtplib import smtplib
 from datetime import datetime
 from passlib.hash import bcrypt
@@ -89,23 +89,22 @@ class User_Proc:
         now = datetime.now()
         tms = now.strftime("%H%M%S")
         hst = request.host
-        rli = hst + '/pwdreset/p/reset?prrurl=' + str(uid) + str(tms) + str(upw)
-        frm = 'vidamusic@vidamusic.com'
-        # mailto = mail(email, "Password Reset", rli)
-        sender = frm
-        receivers = [email]
-        message = f"From: VidaMusic <{frm}> \
-        To: <{email} \
-        Subject: Password Reset \
-        Click on link below to reset your password to VidaMusic.com \
-        Link: {rli} "
-        try:
-            smtpObj = smtplib.SMTP('localhost')
-            smtpObj.sendmail(sender, receivers, message)
-            print("email to reset password sent")
-        except:
-            print("Error: unable to send email")
-        print(rli)
+        rli = '/pwdreset/p/reset?prrurl=' + str(uid) + str(tms) + str(upw)
+        sender = 'testacc@optimum.net'
+        receiver = eml
+        emlacc  = 'testacc@optimum.net'
+        password = 'Pull_PW_From_File'
+        smtp_serv = "mail.optimum.net"
+        port = 465
+        msg1 = f"from: {sender}\nto: {receiver}\nsubject: Password Reset\n\n"
+        msg2 = f"Reset your password to VidaMusic.com\nLink: https://www.google.com{rli}\n\n"
+        msg3 = "VidaMusic"
+        message = msg1+msg2+msg3
+        context = ssl.create_default_context()
+        # with smtplib.SMTP_SSL(smtp_serv, port, context=context, timeout=30) as server:
+        #     server.login(emlacc, password)
+        #     server.sendmail(sender, receiver, message)
+        print("email to reset password sent")
         return True
 
     def del_user(self, uid):
@@ -145,7 +144,7 @@ class Video_Proc:
         return self.audio_title_list
 
 
-# Begin Video processing pages
+# Begin Video processing routes
 # Main Route
 @app.route("/", methods=['GET', 'POST'])
 def index():
