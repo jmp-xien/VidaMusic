@@ -5,9 +5,9 @@
 # Date:     01/01/2020
 # Version:  0.01
 # Requires:
-#  flask, pytube, flask_wtf, wtforms
+#  flask, pytube, flask_wtf, wtforms, flask_sqlalchemy
 
-import os, re, ssl
+import os, re, ssl, ast
 from secure_smtplib import smtplib
 from datetime import datetime
 from passlib.hash import bcrypt
@@ -16,7 +16,7 @@ from flask import request, flash, url_for, escape, current_app, \
 from vidamusic import app, db
 from vidamusic.models import User
 from vidamusic.forms import VideoList, LoginForm, UserAdd, UserUpdate, PwdReset
-from vidamusic.process import proc_download_vid, proc_convert_mp3, proc_check_dir
+from vidamusic.process import proc_download_vid, proc_convert_mp3, proc_check_dir, read_infile
 
 page = {
     "intro": "Main Page",
@@ -75,14 +75,14 @@ class User_Proc:
         return False
 
     def reset_account(self, form):
+        msg = []
         username = form.username.data.strip()
         email  =  form.email.data.strip()
-        if username:
+        if username and email:
             user = User.query.filter_by(username=username).first()
-        elif email:
-            user = User.query.filter_by(email=email).first()
         else:
-            return False
+            msg = [False, "Invalid email or username"]
+            return msg
         eml = user.email
         uid = user.id
         upw = user.password
@@ -90,22 +90,27 @@ class User_Proc:
         tms = now.strftime("%H%M%S")
         hst = request.host
         rli = '/pwdreset/p/reset?prrurl=' + str(uid) + str(tms) + str(upw)
-        sender = 'testacc@optimum.net'
+        emlcrd = {}
+        filena = 'vm.conf'
+        fipath = '/opt/secure/conf'
+        tmpcrd = read_infile(filena, fipath)
+        emlcrd = ast.literal_eval(tmpcrd)
+        sender = emlcrd['euname'] + '@' + emlcrd['domain']
         receiver = eml
-        emlacc  = 'testacc@optimum.net'
-        password = 'Pull_PW_From_File'
-        smtp_serv = "mail.optimum.net"
+        emailacc = emlcrd['euname'] + '@' + emlcrd['domain']
+        password = emlcrd['passwd']
+        smtpserv = "mail.optimum.net"
         port = 465
         msg1 = f"from: {sender}\nto: {receiver}\nsubject: Password Reset\n\n"
-        msg2 = f"Reset your password to VidaMusic.com\nLink: https://www.google.com{rli}\n\n"
+        msg2 = f"\nHello,\n\nReset your password to VidaMusic.com\nLink: https://www.google.com{rli}\n\n"
         msg3 = "VidaMusic"
         message = msg1+msg2+msg3
         context = ssl.create_default_context()
-        # with smtplib.SMTP_SSL(smtp_serv, port, context=context, timeout=30) as server:
-        #     server.login(emlacc, password)
+        # with smtplib.SMTP_SSL(smtpserv, port, context=context, timeout=30) as server:
+        #     server.login(emailacc, password)
         #     server.sendmail(sender, receiver, message)
-        print("email to reset password sent")
-        return True
+        msg = [True, "Link to reset account was sent to your email"]
+        return msg
 
     def del_user(self, uid):
         user = User.query.get(uid)
@@ -353,8 +358,10 @@ def reset():
     if request.method == 'POST':
         up = User_Proc()
         ra = up.reset_account(form)
-        if ra:
-            flash(f'INFO: Link to reset account was sent to your email', 'success')
+        sc = ra[0]
+        msg = ra[1]
+        if sc:
+            flash(f'INFO: {msg}', 'success')
             return redirect(url_for('login'))
         else:
             flash(f'ERROR: Provided info not found, account reset failed', 'error')
@@ -397,3 +404,4 @@ def pwdreset():
             flash(f'ERROR: Password reset failed, contac site admin.', 'error')
     return render_template("pwdreset.html", pageid=pageid, pageli=pageli,
             form=form, username='', usr=usr_dt)
+

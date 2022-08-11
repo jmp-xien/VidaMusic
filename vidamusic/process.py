@@ -66,3 +66,12 @@ def proc_check_dir(dirname):
         return False
     else:
         return True
+
+
+def read_infile(filename, path):
+    indict = ''
+    fullfp = path + '/' + filename
+    with open(fullfp, 'r') as infi:
+        indict = infi.readline()
+    return indict
+
