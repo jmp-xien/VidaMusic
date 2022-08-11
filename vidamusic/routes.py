@@ -91,7 +91,7 @@ class User_Proc:
         hst = request.host
         rli = '/pwdreset/p/reset?prrurl=' + str(uid) + str(tms) + str(upw)
         emlcrd = {}
-        filena = 'vm.conf'
+        filena = 'vidamusic.conf'
         fipath = '/opt/secure/conf'
         tmpcrd = read_infile(filena, fipath)
         emlcrd = ast.literal_eval(tmpcrd)
@@ -99,7 +99,7 @@ class User_Proc:
         receiver = eml
         emailacc = emlcrd['euname'] + '@' + emlcrd['domain']
         password = emlcrd['passwd']
-        smtpserv = "mail.optimum.net"
+        smtpserv = emlcrd['smtp']
         port = 465
         msg1 = f"from: {sender}\nto: {receiver}\nsubject: Password Reset\n\n"
         msg2 = f"\nHello,\n\nReset your password to VidaMusic.com\nLink: https://www.google.com{rli}\n\n"
@@ -112,9 +112,12 @@ class User_Proc:
         msg = [True, "Link to reset account was sent to your email"]
         return msg
 
-    def del_user(self, uid):
+    def del_user(self, inuid):
+        uid = int(inuid)
         user = User.query.get(uid)
-        print("Deleting query:", user)
+        if uid == 1 or user.id == 1 or user.username == "admin":
+            return False
+        print("Deleting query for user:", user)
         db.session.delete(user)
         db.session.commit()
         return True
@@ -301,7 +304,10 @@ def delacc(uid, proc_uname):
     # Check logged in user is admin
     user = User.query.filter_by(username=username).first()
     if not user.admin == "Yes":
-        flash(f'ERROR: Must be admin. NOT allowed to delete user { proc_uname }', 'error')
+        flash(f'ERROR: Must be admin to delete user { proc_uname }', 'error')
+        return redirect(url_for('useredit'))
+    if uid == 1 or uid == "1":
+        flash(f'ERROR: Deleting main Admin account is not allowed', 'error')
         return redirect(url_for('useredit'))
     up = User_Proc()
     du = up.del_user(uid)
