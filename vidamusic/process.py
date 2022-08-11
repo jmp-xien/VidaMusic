@@ -69,7 +69,7 @@ def proc_check_dir(dirname):
 
 
 def read_infile(filename, path):
-    indict = ''
+    indict = None
     fullfp = path + '/' + filename
     with open(fullfp, 'r') as infi:
         indict = infi.readline()
