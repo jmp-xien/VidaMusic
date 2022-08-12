@@ -89,7 +89,8 @@ class User_Proc:
         now = datetime.now()
         tms = now.strftime("%H%M%S")
         hst = request.host
-        rli = '/pwdreset/p/reset?prrurl=' + str(uid) + str(tms) + str(upw)
+        rli = '/pwdreset/p/reset?prurl=' + str(uid) + str(tms) + str(upw)
+        print("Reset link: ", rli)
         emlcrd = {}
         filena = 'vidamusic.conf'
         fipath = '/opt/secure/conf'
@@ -401,7 +402,7 @@ def pwdreset():
             if not password == confpw:
                 flash(f'ERROR: Passwords do not match', 'error')
             return render_template("pwdreset.html", pageid=pageid, pageli=pageli,
-                form=form, username='', usr=usr_dt)
+                form=form, username='#', usr=usr_dt)
         up = User_Proc()
         uu = up.update_user(form, updpw)
         if uu:
@@ -409,5 +410,5 @@ def pwdreset():
         else:
             flash(f'ERROR: Password reset failed, contac site admin.', 'error')
     return render_template("pwdreset.html", pageid=pageid, pageli=pageli,
-            form=form, username='', usr=usr_dt)
+            form=form, username='#', usr=usr_dt)
 
