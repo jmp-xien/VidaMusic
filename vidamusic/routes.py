@@ -161,7 +161,6 @@ def index():
         username = escape(session["username"])
     else:
         return redirect(url_for('login'))
-
     pageid = "intro"
     pageli = page[pageid]
     form = VideoList(request.form)
@@ -170,9 +169,9 @@ def index():
         links  = form.videolink.data
         viddir = form.dirvid.data
         auddir = form.diraud.data
-
         cvidd = proc_check_dir(viddir)
         caudd = proc_check_dir(auddir)
+
         if not (viddir.strip() or cvidd):
             flash(f'ERROR: An invalid Video directory was Provided', 'error')
             return redirect(url_for('index'))
@@ -197,7 +196,6 @@ def login():
     pageid = "login"
     pageli = page[pageid]
     form = LoginForm(request.form)
-
     if request.method == 'POST':
         username = form.username.data
         password = form.password.data
@@ -268,7 +266,7 @@ def useradmin():
         return redirect(url_for('login'))
     user = User.query.filter_by(username=username).first()
     if not user.admin == "Yes":
-        flash(f'ERROR: Must be admin. NOT allowed to edit', 'error')
+        flash(f'ERROR: Access not allowed. Must be admin to edit users', 'error')
         return redirect(url_for('index'))
     pageid = "useradmin"
     pageli = page[pageid]
@@ -280,7 +278,7 @@ def useradmin():
         updpw  = False
         if not (password == '' or password == None):
             if not password == confpw:
-                flash(f'ERROR: Passwords do not match', 'error')
+                flash(f'ERROR: Passwords do not match, please retry', 'error')
                 return redirect(url_for('useredit'))
             else:
                 updpw = True
@@ -289,7 +287,7 @@ def useradmin():
         if uu:
             flash(f'INFO: Updated user account in VidaMusic site', 'success')
         else:
-            flash(f'ERROR: Updating user info failed', 'error')
+            flash(f'ERROR: Failed to update user information', 'error')
     return render_template("useredit.html", pageid=pageid, pageli=pageli,
             form=form, username=username, users=users)
 
@@ -352,7 +350,7 @@ def profile():
         if uu:
             flash(f'INFO: Updated your user account in VidaMusic', 'success')
         else:
-            flash(f'ERROR: Updating your info failed', 'error')
+            flash(f'ERROR: Updating your information failed', 'error')
     return render_template("profile.html", pageid=pageid, pageli=pageli,
             form=form, username=username, usr=usr_dt)
 
@@ -371,7 +369,7 @@ def reset():
             flash(f'INFO: {msg}', 'success')
             return redirect(url_for('login'))
         else:
-            flash(f'ERROR: Provided info not found, account reset failed', 'error')
+            flash(f'ERROR: Info does not match an account, reset failed', 'error')
     return render_template("reset.html", form=form, pageid=pageid, pageli=pageli)
 
 
@@ -411,4 +409,3 @@ def pwdreset():
             flash(f'ERROR: Password reset failed, contac site admin.', 'error')
     return render_template("pwdreset.html", pageid=pageid, pageli=pageli,
             form=form, username='#', usr=usr_dt)
-
