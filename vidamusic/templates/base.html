@@ -11,14 +11,14 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
         <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/main.css') }}" />
         <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/modal.css') }}" />
-        
+
     </head>
     <body class="is-preload">
         <div id="header">
             <ul class="icons">
                 {% if not pageid=="login" %}
                 <li><a href="/"><span class="fa fa-home"></span> Home</a></li>
-                <li><a href="/logout"><span class="fa fa-door-open"></span> Logout</a></li>                
+                <li><a href="/logout"><span class="fa fa-door-open"></span> Logout</a></li>
                 {% if not (pageid=="pwdreset" or pageid=="reset") %}
                 <li><a href="/profile"><span class="fa fa-user"></span> &nbsp; {{ username }} </a></li>
                 {% endif %}
@@ -37,8 +37,7 @@
                     {% endif %}
                 {% endwith %}
             </div>
-             
-        <!-- Header -->
+            <!-- Header -->
             <header id="header">
                 <h1><a href="/">VidaMusic</a></h1>
                 <p>A simple web based application to convert your <br />
@@ -47,18 +46,18 @@
             {% block content %}{% endblock %}
         </div>
         <!-- Footer -->
-            <footer id="footer">
-                <ul class="icons">
-                    <li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
-                    <li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
-                    <li><a href="#" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
-                    <li><a href="#" class="icon fa-envelope"><span class="label">Email</span></a></li>
-                </ul>
-                <ul class="copyright">
-                    <li>&copy; Untitled.</li><li>Credits: <a href="http://html5up.net">HTML5 UP</a></li>
-                </ul>
-            </footer>
+        <footer id="footer">
+            <ul class="icons">
+                <li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+                <li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+                <li><a href="#" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
+                <li><a href="#" class="icon fa-envelope"><span class="label">Email</span></a></li>
+            </ul>
+            <ul class="copyright">
+                <li>&copy; Untitled.</li><li>Credits: <a href="http://html5up.net">HTML5 UP</a></li>
+            </ul>
+        </footer>
         <!-- Scripts -->
-            <script src="{{ url_for('static', filename='assets/js/main.js') }}"></script>
+        <script src="{{ url_for('static', filename='assets/js/main.js') }}"></script>
     </body>
 </html>

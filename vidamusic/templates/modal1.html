@@ -3,7 +3,6 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-
 <style>
 body {font-family: Arial, Helvetica, sans-serif;}
 
@@ -39,7 +38,7 @@ body {font-family: Arial, Helvetica, sans-serif;}
 
 /* Add Animation */
 @-webkit-keyframes animatetop {
-  from {top:-300px; opacity:0} 
+  from {top:-300px; opacity:0}
   to {top:0; opacity:1}
 }
 
@@ -91,7 +90,7 @@ body {font-family: Arial, Helvetica, sans-serif;}
   padding: 3px;
   box-shadow: inset 0 -1px 1px rgba(255, 255, 255, 0.3);
   }
-  
+
   #greenBar {
   display: block;
   height: 100%;
@@ -109,7 +108,7 @@ body {font-family: Arial, Helvetica, sans-serif;}
   color: white;
   transition: all 700ms ease;
   }
-  
+
   button {
   display: block;
   margin: auto;
@@ -122,7 +121,7 @@ body {font-family: Arial, Helvetica, sans-serif;}
   padding: 10px 10px;
   cursor: pointer;
   }
-  
+
   button:active {
   width: 80px;
   height: 50px;
@@ -145,16 +144,15 @@ body {font-family: Arial, Helvetica, sans-serif;}
       <span class="close">&times;</span>
       <h2>Modal Header</h2>
     </div>
-    <div class="modal-body">   
+    <div class="modal-body">
       <div class="progressbarWrapper">
         <span id="greenBar"></span>
-      </div>           
+      </div>
     </div>
     <div class="modal-footer">
       <h3>Modal Footer</h3>
     </div>
   </div>
-
 </div>
 
 <script>
@@ -167,7 +165,7 @@ var btn = document.getElementById("myBtn");
 // Get the <span> element that closes the modal
 var span = document.getElementsByClassName("close")[0];
 
-// When the user clicks the button, open the modal 
+// When the user clicks the button, open the modal
 btn.onclick = function() {
   modal.style.display = "block";
   let elem = document.getElementById("greenBar");
@@ -178,7 +176,7 @@ btn.onclick = function() {
 
     if (stepValue >= 100) {
       clearInterval(id);
-      
+
     } else {
       elem.style.width = (stepValue + 1) + "%";
       elem.innerHTML = (stepValue + 1) + "%";
@@ -200,9 +198,9 @@ window.onclick = function(event) {
 }
 </script>
 <script>
-  
+
 function move() {
-          
+
   let elem = document.getElementById("greenBar");
   let stepValue = 0;
   let id = setInterval(frame, 700);
@@ -211,7 +209,7 @@ function move() {
 
     if (stepValue >= 100) {
       clearInterval(id);
-      
+
     } else {
       elem.style.width = (stepValue + 1) + "%";
       elem.innerHTML = (stepValue + 1) + "%";
