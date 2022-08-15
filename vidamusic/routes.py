@@ -15,8 +15,10 @@ from flask import request, flash, url_for, escape, current_app, \
     redirect, render_template, session, send_from_directory, send_file
 from vidamusic import app, db
 from vidamusic.models import User
-from vidamusic.forms import VideoList, LoginForm, UserAdd, UserUpdate, PwdReset
-from vidamusic.process import proc_download_vid, proc_convert_mp3, proc_check_dir, read_infile
+from vidamusic.forms import VideoList, LoginForm, UserAdd, UserUpdate, \
+        PwdReset
+from vidamusic.process import proc_download_vid, proc_convert_mp3, \
+        proc_check_dir, read_infile
 
 page = {
     "intro": "Main Page",
@@ -41,10 +43,30 @@ class User_Proc:
         user = User.query.filter_by(username=username).first()
         return user.id
 
+    def check_email(self, email):
+        chkeml = User.query.filter_by(email=email).first()
+        if chkeml:
+            return True
+        return False
+
+    def check_username(self, username):
+        chkusr = User.query.filter_by(username=username).first()
+        if chkusr:
+            return True
+        return False
+
     def add_user(self, form):
         username = form.username.data.strip()
         password = form.password.data.strip()
-        email  =  form.email.data.strip()
+        email  = form.email.data.strip()
+        chkusr = self.check_username(username)
+        chkeml = self.check_email(email)
+        if chkusr:
+            flash(f'ERROR: Username already exists', 'error')
+            return False
+        if chkeml:
+            flash(f'ERROR: Username with provide email already exists', 'error')
+            return False
         admin  =  'No'
         pwhash =  bcrypt.hash(password)
         newuser = User(username, pwhash, email, admin)
@@ -75,14 +97,16 @@ class User_Proc:
         return False
 
     def reset_account(self, form):
-        msg = []
         username = form.username.data.strip()
-        email  =  form.email.data.strip()
-        if username and email:
-            user = User.query.filter_by(username=username).first()
+        email = form.email.data.strip()
+        user = User.query.filter_by(username=username).first()
+        if user:
+            if not user.email == email:
+                flash(f'ERROR: "Email does not match the account username', 'error')
+                return False
         else:
-            msg = [False, "Invalid email or username"]
-            return msg
+            flash(f'ERROR: "Provided account username was not found', 'error')
+            return False
         eml = user.email
         uid = user.id
         upw = user.password
@@ -102,16 +126,16 @@ class User_Proc:
         password = emlcrd['passwd']
         smtpserv = emlcrd['smtp']
         port = 465
-        msg1 = f"from: {sender}\nto: {receiver}\nsubject: Password Reset\n\n"
-        msg2 = f"\nHello,\n\nReset your password to VidaMusic.com\nLink: https://www.google.com{rli}\n\n"
+        msg1 = f"from: {sender}\nto: {receiver}\nsubject: Password Reset\n\n\n"
+        msg2 = f"Hello,\n\nReset your password to VidaMusic.com\nLink: https://www.google.com{rli}\n\n"
         msg3 = "VidaMusic"
         message = msg1+msg2+msg3
         context = ssl.create_default_context()
         # with smtplib.SMTP_SSL(smtpserv, port, context=context, timeout=30) as server:
         #     server.login(emailacc, password)
         #     server.sendmail(sender, receiver, message)
-        msg = [True, "Link to reset account was sent to your email"]
-        return msg
+        flash('NOTE: Link to reset account was sent to your email', 'error')
+        return True
 
     def del_user(self, inuid):
         uid = int(inuid)
@@ -233,7 +257,7 @@ def newacc():
             flash(f'INFO: Added new user account to VidaMusic site', 'success')
             return redirect(url_for('login'))
         else:
-            flash(f'ERROR: Adding new user failed', 'error')
+            flash(f'ERROR: Unable to create new account', 'error')
     return render_template("newacc.html", form=form, pageid=pageid, pageli=pageli, username=username)
 
 
@@ -363,13 +387,8 @@ def reset():
     if request.method == 'POST':
         up = User_Proc()
         ra = up.reset_account(form)
-        sc = ra[0]
-        msg = ra[1]
-        if sc:
-            flash(f'INFO: {msg}', 'success')
+        if ra:
             return redirect(url_for('login'))
-        else:
-            flash(f'ERROR: Info does not match an account, reset failed', 'error')
     return render_template("reset.html", form=form, pageid=pageid, pageli=pageli)
 
 

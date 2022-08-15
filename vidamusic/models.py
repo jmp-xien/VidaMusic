@@ -27,4 +27,4 @@ class User(db.Model):
         self.username = username
         self.password = password
         self.email = email
-        self.admin = admin 
+        self.admin = admin
