@@ -63,9 +63,9 @@
     <div class="field half">
         <br />
         Enter Path To Save Video Files: <br>
-        {{ form.dirvid(type="text") }}<br />
+        {{ form.dirvid(type="text", value="VideoFiles") }}<br />
         Enter Path To Save Audio Files: <br />
-        {{ form.diraud(type="text") }}<br />
+        {{ form.diraud(type="text", value="AudioFiles") }}<br />
     </div>
     <div class="centeredfield">
       {{ form.submit(id="Button1", onclick="move();") }}
