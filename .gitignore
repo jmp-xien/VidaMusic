@@ -1,5 +1,7 @@
 Audio/*
+AudioFiles/*
 Video/*
+VideoFiles/*
 Music/*
 vidamusic/__pycache__
 !.gitignore
