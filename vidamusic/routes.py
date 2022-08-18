@@ -18,7 +18,7 @@ from vidamusic.models import User
 from vidamusic.forms import VideoList, LoginForm, UserAdd, UserUpdate, \
         PwdReset
 from vidamusic.process import proc_download_vid, proc_convert_mp3, \
-        proc_check_dir, read_infile, proc_create_dir
+        proc_check_dir, proc_read_infile, proc_create_dir
 
 page = {
     "intro": "Main Page",
@@ -102,7 +102,7 @@ class User_Proc:
         user = User.query.filter_by(username=username).first()
         if user:
             if not user.email == email:
-                flash(f'ERROR: "Email does not match the account username', 'error')
+                flash(f'ERROR: Email does not match the "username" account', 'error')
                 return False
         else:
             flash(f'ERROR: "Provided account username was not found', 'error')
@@ -118,7 +118,7 @@ class User_Proc:
         emlcrd = {}
         filena = 'vidamusic.conf'
         fipath = '/opt/secure/conf'
-        tmpcrd = read_infile(filena, fipath)
+        tmpcrd = proc_read_infile(filena, fipath)
         emlcrd = ast.literal_eval(tmpcrd)
         sender = emlcrd['euname'] + '@' + emlcrd['domain']
         receiver = eml
@@ -134,7 +134,7 @@ class User_Proc:
         # with smtplib.SMTP_SSL(smtpserv, port, context=context, timeout=30) as server:
         #     server.login(emailacc, password)
         #     server.sendmail(sender, receiver, message)
-        flash('NOTE: Link to reset account was sent to your email', 'info')
+        flash('NOTE: Link to reset account was sent to your email', 'success')
         return True
 
     def del_user(self, inuid):
@@ -265,7 +265,7 @@ def download(auddir, filename):
         username = escape(session["username"])
     else:
         return redirect(url_for('login'))
-    # change DIR to be a secure location 
+    # change DIR to be a secure location
     root_dir = '/opt/secure/web/VidaMusic'
     basedir = root_dir + '/' + auddir + '/'
     path = basedir + filename
@@ -349,14 +349,14 @@ def profile():
     usr_dt = []
     pageid = "profile"
     pageli = page[pageid]
-    proc_user = User.query.filter_by(username=username).first()
-    if not proc_user or username == 'guest':
+    q_user = User.query.filter_by(username=username).first()
+    if not q_user or username == 'guest':
         flash(f'ERROR: Unable to edit "guest" profiles', 'error')
         return redirect(url_for('index'))
     form = UserUpdate(request.form)
-    usr_dt.append(proc_user)
+    usr_dt.append(q_user)
     if request.method == 'POST':
-        if not username == proc_uname:
+        if not username == q_user.username:
             flash(f'ERROR: Unable to load your profile due to error', 'error')
             return redirect(url_for('index'))
         password = form.password.data.strip()

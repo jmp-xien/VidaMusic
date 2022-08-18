@@ -74,17 +74,17 @@ def proc_gen_id(idlen):
     return newid
 
 
-def proc_create_dir(dirname): 
-    dina_le = 6  
+def proc_create_dir(dirname):
+    dina_le = 6
     dirsuff = proc_gen_id(dina_le)
     newdir = dirname + "_" + dirsuff
     cmd1 = 'mkdir ' + newdir
     print("Created new directory:", newdir)
     subprocess.run(cmd1, shell=True)
     return newdir
-    
 
-def read_infile(filename, path):
+
+def proc_read_infile(filename, path):
     indict = None
     fullfp = path + '/' + filename
     with open(fullfp, 'r') as infi:
