@@ -79,6 +79,7 @@ def proc_create_dir(dirname):
     dirsuff = proc_gen_id(dina_le)
     newdir = dirname + "_" + dirsuff
     cmd1 = 'mkdir ' + newdir
+    print("Created new directory: ", newdir)
     subprocess.run(cmd1, shell=True)
     return newdir
     
