@@ -25,14 +25,15 @@ kw7={kwph: 'Is Admin'}
 dirlist = [('windows', "C:/users/username/Music : enter username"), \
         ('linux', "/home/username/Music : enter username")]
 
+
 class VideoList(FlaskForm):
     # sid = HiddenField('uid', validators=[DataRequired()])
     videolink = TextAreaField(u'Video Links', validators=[DataRequired()],
         render_kw=kw0)
-    dirvid = StringField(u'Video Dir', validators=[DataRequired()],
-        render_kw=kw1)
-    diraud = StringField(u'Audio Dir', validators=[DataRequired()],
-        render_kw=kw2)
+    dirvid = StringField(u'Video Dir', validators=[DataRequired(),
+        validators.Length(min=4, max=25)], render_kw=kw1)
+    diraud = StringField(u'Audio Dir', validators=[DataRequired(),
+        validators.Length(min=4, max=25)], render_kw=kw2)
     submit = SubmitField(label=('Convert To Audio'))
 
 
@@ -58,7 +59,7 @@ class UserAdd(BaseUser):
         validators.Length(min=8, max=24),
         validators.EqualTo('password_confirm',
         message='Passwords do not match')], render_kw=kw5)
-    password_confirm = PasswordField(u'Password Confirm', 
+    password_confirm = PasswordField(u'Password Confirm',
         validators=[validators.Length(min=8, max=24)], render_kw=kw6)
     submit = SubmitField(label=('Add User'))
 

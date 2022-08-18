@@ -7,7 +7,7 @@
 # Requires:
 #  flask, pytube, flask_wtf, wtforms
 
-import os, subprocess, re
+import os, subprocess, re, random, string
 from pytube import YouTube
 
 del_chars = [';' ':', ",", "'"]
@@ -61,12 +61,27 @@ def proc_convert_mp3(vft, audpath, vidpath):
 
 
 def proc_check_dir(dirname):
-    valchr = re.compile(r"[-_A-Za-z0-9]")
+    valchr = re.compile(r"^[A-Za-z][-_A-Za-z0-9]{:23}")
     if not valchr.search(dirname):
         return False
     else:
         return True
 
+
+def proc_gen_id(idlen):
+    r_alnu = string.ascii_lowercase + string.ascii_uppercase + string.digits
+    newid = ''.join(random.SystemRandom().choice(r_alnu) for _ in range(idlen))
+    return newid
+
+
+def proc_create_dir(dirname): 
+    dina_le = 6  
+    dirsuff = proc_gen_id(dina_le)
+    newdir = dirname + "_" + dirsuff
+    cmd1 = 'mkdir ' + newdir
+    subprocess.run(cmd1, shell=True)
+    return newdir
+    
 
 def read_infile(filename, path):
     indict = None

@@ -18,7 +18,7 @@ from vidamusic.models import User
 from vidamusic.forms import VideoList, LoginForm, UserAdd, UserUpdate, \
         PwdReset
 from vidamusic.process import proc_download_vid, proc_convert_mp3, \
-        proc_check_dir, read_infile
+        proc_check_dir, read_infile, proc_create_dir
 
 page = {
     "intro": "Main Page",
@@ -151,8 +151,8 @@ class User_Proc:
 class Video_Proc:
     def __init__(self, links, viddir, auddir):
         self.links  = links
-        self.viddir = viddir
-        self.auddir = auddir
+        self.viddir = proc_create_dir(viddir)
+        self.auddir = proc_create_dir(auddir)
         self.video_title_list = []
         self.audio_title_list = []
 
@@ -178,7 +178,6 @@ class Video_Proc:
 
 
 # Begin Video processing routes
-# Main Route
 @app.route("/", methods=['GET', 'POST'])
 def index():
     if "username" in session:
@@ -191,22 +190,20 @@ def index():
 
     if request.method == 'POST':
         links  = form.videolink.data
-        viddir = form.dirvid.data
-        auddir = form.diraud.data
+        viddir = form.dirvid.data.strip()
+        auddir = form.diraud.data.strip()
         cvidd = proc_check_dir(viddir)
         caudd = proc_check_dir(auddir)
 
-        if not (viddir.strip() or cvidd):
+        if not (viddir or cvidd):
             flash(f'ERROR: An invalid Video directory was Provided', 'error')
             return redirect(url_for('index'))
-        if not (auddir.strip() or caudd):
+        if not (auddir or caudd):
             flash(f'ERROR: An invalid Audio directory was Provided', 'error')
             return redirect(url_for('index'))
-
         vp  = Video_Proc(links, viddir, auddir)
         vd  = vp.download_vid()
         afl = vp.extract_audio()
-
         if afl:
             flash(f'INFO: Converted videos to mp3 music files', 'success')
         else:
@@ -267,7 +264,8 @@ def download(auddir, filename):
         username = escape(session["username"])
     else:
         return redirect(url_for('login'))
-    root_dir = '/home/manny/Share/VidaMusic'
+    # change DIR to be a secure location 
+    root_dir = '/opt/secure/web/VidaMusic'
     basedir = root_dir + '/' + auddir + '/'
     path = basedir + filename
     # return send_from_directory(dirpath, filename, as_attachment=True)
@@ -281,7 +279,7 @@ def logout():
     return redirect(url_for('login'))
 
 
-# Admin
+# Admin Access: user edit
 @app.route("/useradmin", methods=['GET', 'POST'])
 def useradmin():
     if "username" in session:
@@ -316,7 +314,7 @@ def useradmin():
             form=form, username=username, users=users)
 
 
-# Admin
+# Admin Access: delete accounts
 @app.route("/delacc/<uid>/<proc_uname>", methods=['GET', 'POST'])
 def delacc(uid, proc_uname):
     if "username" in session:
