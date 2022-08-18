@@ -167,13 +167,13 @@ class Video_Proc:
         return True
 
     def extract_audio(self):
-        # loop titles
+        # Loop every video title
         print("Converting video to mp3 music file")
         for vft in self.video_title_list:
             print("Extracting audio from:", vft)
             at = proc_convert_mp3(vft, self.auddir, self.viddir)
             self.audio_title_list.append(at)
-        print("Completed conversion to mp3 audio")
+        print("Completed conversion of video to mp3 audio")
         return self.audio_title_list
 
 
@@ -208,7 +208,7 @@ def index():
             flash(f'INFO: Converted videos to mp3 music files', 'success')
         else:
             flash(f'ERROR: Video file conversion to mp3 failed', 'error')
-        return render_template("process.html", audiolist=afl, username=username, auddir=auddir)
+        return render_template("process.html", audiolist=afl, username=username, auddir=vp.auddir)
     return render_template("index.html", form=form, pageid=pageid, pageli=pageli, username=username)
 
 
