@@ -188,14 +188,12 @@ def index():
     pageid = "intro"
     pageli = page[pageid]
     form = VideoList(request.form)
-
     if request.method == 'POST':
         links  = form.videolink.data
         viddir = form.dirvid.data.strip()
         auddir = form.diraud.data.strip()
         cvidd = proc_check_dir(viddir)
         caudd = proc_check_dir(auddir)
-
         if not (viddir or cvidd):
             flash(f'ERROR: An invalid Video directory was Provided', 'error')
             return redirect(url_for('index'))
@@ -209,6 +207,7 @@ def index():
             flash(f'INFO: Converted videos to mp3 music files', 'success')
         else:
             flash(f'ERROR: Video file conversion to mp3 failed', 'error')
+            return redirect(url_for('index'))
         return render_template("process.html", audiolist=afl, username=username, auddir=vp.auddir)
     return render_template("index.html", form=form, pageid=pageid, pageli=pageli, username=username)
 

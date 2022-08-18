@@ -61,7 +61,7 @@ class UserAdd(BaseUser):
         message='Passwords do not match')], render_kw=kw5)
     password_confirm = PasswordField(u'Password Confirm',
         validators=[validators.Length(min=8, max=24)], render_kw=kw6)
-    submit = SubmitField(label=('Add User'))
+    submit = SubmitField(label=('Create Account'))
 
 
 class UserUpdate(BaseUser):
