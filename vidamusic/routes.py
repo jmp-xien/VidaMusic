@@ -89,8 +89,8 @@ class User_Proc:
         user = User.query.filter_by(username=username).first()
         if user:
             # InPw,DBhash: bcrypt.verify(in-pw, db-hash)
-            pw_match = bcrypt.verify(password, user.password)
-            if pw_match:
+            pwd_match = bcrypt.verify(password, user.password)
+            if pwd_match:
                 return True
             else:
                 return False
@@ -134,13 +134,14 @@ class User_Proc:
         # with smtplib.SMTP_SSL(smtpserv, port, context=context, timeout=30) as server:
         #     server.login(emailacc, password)
         #     server.sendmail(sender, receiver, message)
-        flash('NOTE: Link to reset account was sent to your email', 'error')
+        flash('NOTE: Link to reset account was sent to your email', 'info')
         return True
 
     def del_user(self, inuid):
         uid = int(inuid)
         user = User.query.get(uid)
         if uid == 1 or user.id == 1 or user.username == "admin":
+            flash('ERROR: Unable to delete Admin account', 'error')
             return False
         print("Deleting query for user:", user)
         db.session.delete(user)
