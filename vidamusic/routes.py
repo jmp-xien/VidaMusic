@@ -190,16 +190,18 @@ def index():
     form = VideoList(request.form)
     if request.method == 'POST':
         links  = form.videolink.data
-        viddir = form.dirvid.data.strip()
-        auddir = form.diraud.data.strip()
-        cvidd = proc_check_dir(viddir)
-        caudd = proc_check_dir(auddir)
-        if not (viddir or cvidd):
+        tmpvid = form.dirvid.data.strip()
+        tmpaud = form.diraud.data.strip()
+        cvidd = proc_check_dir(tmpvid)
+        caudd = proc_check_dir(tmpaud)
+        if not (tmpvid or cvidd):
             flash(f'ERROR: An invalid Video directory was Provided', 'error')
             return redirect(url_for('index'))
-        if not (auddir or caudd):
+        if not (tmpaud or caudd):
             flash(f'ERROR: An invalid Audio directory was Provided', 'error')
             return redirect(url_for('index'))
+        viddir = 'VideoFiles/' + tmpvid 
+        auddir = 'AudioFiles/' + tmpaud        
         vp  = Video_Proc(links, viddir, auddir)
         vd  = vp.download_vid()
         afl = vp.extract_audio()
